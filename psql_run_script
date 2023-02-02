@@ -1,0 +1,12 @@
+if  [ ! "$(docker ps -a | grep bac_postgres)" ]; then
+        docker run -d \
+	--name bac_postgres \
+	-e POSTGRES_PASSWORD=misha \
+	-e PGDATA=/var/lib/postgresql/data/pgdata \
+	-v `pwd`/psdata:/var/lib/postgresql/data/pgdata \
+        -p 5432:5432 \
+	postgres
+
+else 
+  docker start bac_postgres
+fi
