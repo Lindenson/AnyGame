@@ -1,8 +1,13 @@
 package wolper.service
 
-class CheckerService {
+import java.lang.IllegalArgumentException
 
-    fun countBulls(puzzle : Int, guess : Int) : List <Int> {
+class CheckerServiceImplementation : CheckerService {
+
+    override fun countBulls(puzzle : Int, guess : Int) : List <Int> {
+
+        if (puzzle < 1000 || puzzle > 9999 || guess < 1000 || guess > 9999) throw IllegalArgumentException()
+
         val pl = ints(puzzle)
         val gl = ints(guess)
 

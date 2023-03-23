@@ -10,9 +10,7 @@ import org.springframework.data.relational.core.query.Query.query
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
-import wolper.entities.Gamer
-import java.time.LocalDateTime
+import wolper.Gamer
 import java.util.UUID
 
 
@@ -34,9 +32,7 @@ class GamerDAOImplementation(
     override fun createGamer(@NotNull @Size(min = 3, max = 20) @Pattern(regexp = "[0-9A-Za-z]+") player : String) : Mono<Gamer> {
 
         val newGamer = Gamer(null, player, UUID.randomUUID().toString(), null)
-        return getGamer(player)
-            .flatMap { Mono.error<Gamer>(IllegalArgumentException())  }
-            .switchIfEmpty { r2temlate.insert(newGamer) }
+        return r2temlate.insert(newGamer)
     }
 
     override fun deleteGamer(@NotNull player : String) : Mono<Long> {

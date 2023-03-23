@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import wolper.entities.Gamer
+import wolper.Gamer
 
 
 @Service

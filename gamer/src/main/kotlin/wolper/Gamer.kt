@@ -1,4 +1,4 @@
-package wolper.entities
+package wolper
 
 import java.time.LocalDateTime
 

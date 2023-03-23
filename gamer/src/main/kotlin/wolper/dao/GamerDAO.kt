@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import reactor.core.publisher.Mono
-import wolper.entities.Gamer
+import wolper.Gamer
 
 interface GamerDAO {
     fun getGamer(@NotNull player: String): Mono<Gamer>
