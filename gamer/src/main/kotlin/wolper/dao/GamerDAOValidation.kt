@@ -35,9 +35,9 @@ class GamerDAOValidation(@Qualifier("bareService") private var gamerService: Gam
         }
     }
 
-    override fun getGamers(): Mono<List<String>> {
+    override fun getFreeGamers(): Mono<List<String>> {
         return try {
-            gamerService.getGamers()
+            gamerService.getFreeGamers()
         }catch( ex : Exception) {
             Mono.error(ex)
         }

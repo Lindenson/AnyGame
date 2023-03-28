@@ -30,8 +30,7 @@ class GamerDAOImplementation(
     }
 
     override fun createGamer(@NotNull @Size(min = 3, max = 20) @Pattern(regexp = "[0-9A-Za-z]+") player : String) : Mono<Gamer> {
-
-        val newGamer = Gamer(null, player, UUID.randomUUID().toString(), null)
+        val newGamer = Gamer(null, player, UUID.randomUUID().toString(), false, null)
         return r2temlate.insert(newGamer)
     }
 
@@ -41,10 +40,9 @@ class GamerDAOImplementation(
             Gamer::class.java)
     }
 
-    override fun getGamers(): Mono<List<String>> {
+    override fun getFreeGamers(): Mono<List<String>> {
         return r2temlate.databaseClient.sql("""
-                SELECT * from gamer A WHERE NOT EXISTS (select *
-                 from game B where B.player1 = A.name OR B.player2 = A.name)
+                SELECT * from gamer A WHERE not busy 
         """.trimIndent()).fetch().all()
             .map { it["name"] as String }
             .collectList()

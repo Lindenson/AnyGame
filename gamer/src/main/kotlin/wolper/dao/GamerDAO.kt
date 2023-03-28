@@ -12,6 +12,6 @@ interface GamerDAO {
     fun createGamer(
         @NotNull @Size(min = 3, max = 20) @Pattern(regexp = "[0-9A-Za-z]+") player : String,
     ): Mono<Gamer>
-    fun getGamers(): Mono<List<String>>
+    fun getFreeGamers(): Mono<List<String>>
     fun deleteGamer(@NotNull player: String): Mono<Long>
 }
