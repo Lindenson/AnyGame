@@ -1,0 +1,17 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: misha
+
+  sql:
+    init:
+      mode: always
+
+  lifecycle:
+    timeout-per-shutdown-phase: "30s"
+
+
+server:
+  shutdown: graceful
+
