@@ -7,32 +7,26 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
-import wolper.adao.AGameHistoryDAO
 import wolper.adao.AGameHistoryDAOImpl
 import wolper.adao.AGameStateDAO
 import wolper.domain.*
-import wolper.formal.domain.AGameDisposition
-import wolper.formal.domain.AGameHistory
-import wolper.formal.domain.AMove
-import wolper.formal.helper.AMapper
 import wolper.json.JsonHelpers
 
 
 @Component
 class GameHandler(
-    private val gameHistory: AGameHistoryDAOImpl<GameHistory>,
+    private val gameHistory: AGameStateDAO<GameState>,
     private val json : JsonHelpers
 ) {
 
      val logger = LoggerFactory.getLogger(GameHandler::class.java)
 
      fun getGames(request: ServerRequest): Mono<ServerResponse> {
-         val gameState = GameState(388, GameStartingPoint(2, mutableListOf(1, 772)), GameDisposition(2, mutableListOf(771, 772)), 66)
+         val gameState = GameState(6588, GameStartingPoint(2, mutableListOf(1, 772)), GameDisposition(2, mutableListOf(771, 772)), 66)
          val gameHistory1 = GameHistory(188, mutableListOf(GameDisposition(2, mutableListOf(1, 1))), mutableListOf(Move(2, mutableListOf(771, 772))))
 
-         return gameHistory.getGameHistory(188, {x,y,z-> GameHistory(x,y as List<GameDisposition>,z as List<Move>)},
-                        { AMapper.fromDespositionDTO<GameDisposition>(json.desposition, it)},
-                        { AMapper.fromMoveDTO<Move>(json.move, it)})
+         return gameHistory.createGameState(gameState)
+         { json.state to it }
          .flatMap { ServerResponse.ok().bodyValue(it) }.onErrorResume { errorMessageResolver(it) }
 //
 //

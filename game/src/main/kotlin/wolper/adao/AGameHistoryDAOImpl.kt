@@ -18,20 +18,29 @@ import wolper.formal.dto.AGameMoveDTO
 @Qualifier("abstractService")
 class AGameHistoryDAOImpl<W: AGameHistory<*, *>>(private val template: R2dbcEntityTemplate) : AGameHistoryDAO<W> {
 
-//    createGameHistory/updateGameHistory(gameHistory)
-//    { from  ->  Pair(from.dispositions.map { AMapper.toDespositionDTO(from.gameID, json.desposition, it) },
-//                     from.moves.map        { AMapper.toMoveDTO(from.gameID,        json.move,        it)})}
+//    createGameHistory<GameDisposition, Move>(gameHistory,
+//    { json.desposition to it.disposition!! },
+//    { json.move to  it.move!! })
 
-    override fun createGameHistory(gameHistory: W, pairOfMappers : (W) -> Pair<List<AGameDispositionDTO>, List<AGameMoveDTO>> ) : Mono<out W>{
-        val (dList, mList) = pairOfMappers(gameHistory)
+    override fun <E : AGameDisposition<*>,T : AMove<*>> createGameHistory(gameHistory: W,
+                                                                          remaperD: (E) -> String,
+                                                                          remaperM: (T)-> String) : Mono <out W>
+    {
+        val dList = gameHistory.dispositions.map { remaperD(it as E) }.map { AGameDispositionDTO(gameHistory.gameID, it) }
+        val mList = gameHistory.moves.map { remaperM(it as T) }.map { AGameMoveDTO(gameHistory.gameID, it) }
         return Flux.fromIterable(dList).flatMap { template.insert(it) }.collectList().flatMap {
         Flux.fromIterable(mList).flatMap { template.insert(it) }.collectList() }.flatMap { Mono.just(gameHistory) }
     }
 
-//    getGameHistory(188, {x,y,z-> GameHistory(x,y as List<GameDisposition>,z as List<Move>)},
-//                        { AMapper.fromDespositionDTO<GameDisposition>(json.desposition, it)},
-//                        { AMapper.fromMoveDTO<Move>(json.move, it)})
-    override fun getGameHistory(id: Long, classer : (Long, List<AGameDisposition<*>>, List<AMove<*>>) -> (W), remaperD: (AGameDispositionDTO) -> (AGameDisposition<*>), remaperM: (AGameMoveDTO) -> (AMove<*>)) : Mono <out W> {
+//    getGameHistory<GameDisposition, Move>(188,
+//    { x,y,z -> GameHistory(x, y ,z) },
+//    { json.desposition from it.disposition!! },
+//    { json.move from it.move!! })
+
+    override fun <E : AGameDisposition<*>,T : AMove<*>> getGameHistory(id: Long, classer : (Long, List<E>, List<T>) -> (W),
+                                remaperD: (AGameDispositionDTO) -> E,
+                                remaperM: (AGameMoveDTO) -> T) : Mono <out W>
+    {
         return  template.select(Query.query(Criteria.where("game_id").`is`(id)), AGameDispositionDTO::class.java)
                 .map { remaperD(it) }.collectList()
                 .flatMap { if (it.isEmpty()) Mono.empty() else Mono.just(it) }
@@ -43,8 +52,15 @@ class AGameHistoryDAOImpl<W: AGameHistory<*, *>>(private val template: R2dbcEnti
             }
     }
 
-    override fun updateGameHistory(gameHistory: W, pairOfMappers : (W) -> Pair<List<AGameDispositionDTO>, List<AGameMoveDTO>>) : Mono<out W> {
-        val (dList, mList) = pairOfMappers(gameHistory)
+//    updateGameHistory<GameDisposition, Move>(gameHistory,
+//    { json.desposition to it.disposition!! },
+//    { json.move to  it.move!! })
+    override fun <E : AGameDisposition<*>,T : AMove<*>>  updateGameHistory(gameHistory: W,
+                                                                           remaperD: (E) -> String,
+                                                                           remaperM: (T)-> String) : Mono <out W>
+    {
+        val dList = gameHistory.dispositions.map { remaperD(it as E) }.map { AGameDispositionDTO(gameHistory.gameID, it) }
+        val mList = gameHistory.moves.map { remaperM(it as T) }.map { AGameMoveDTO(gameHistory.gameID, it) }
         return deleteGameHistory(gameHistory.gameID).flatMap {
             Flux.fromIterable(dList).flatMap { template.insert(it) }.collectList().flatMap {
             Flux.fromIterable(mList).flatMap { template.insert(it) }.collectList() }.flatMap { Mono.just(gameHistory) }

@@ -29,6 +29,8 @@ class AGameStateDAOImpl<W : AGameState<*, *, *>> (private val template: R2dbcEnt
             .map { work (it.state!!) }
     }
 
+//    createGameState/updateGameState(gameState)
+//    { json.state to it }
     override fun updateGameState(id: Long, gameState : W, work : (W) -> String) : Mono<out W>{
         val gs =  work(gameState)
         return template.update(Query.query(Criteria.where("game_id").`is`(id)), Update.update("state", gs), AGameStateDTO::class.java)

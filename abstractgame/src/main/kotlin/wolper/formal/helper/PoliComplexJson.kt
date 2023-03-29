@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 
 
 
-class PoliComplexJson {
+class PoliComplexJson<T> {
 
     lateinit var module: SerializersModule
 
@@ -42,8 +42,8 @@ class PoliComplexJson {
 
 
         @OptIn(InternalSerializationApi::class)
-        fun <T : Any, E : T> newSerializerFor(son: KClass<E>): PoliComplexJson {
-            val poliJson = PoliComplexJson()
+        inline fun <reified T : Any, E : T> newSerializerFor(son: KClass<E>): PoliComplexJson<T> {
+            val poliJson = PoliComplexJson<T>()
             val classOfFather = getFather<E, T>(son)
             poliJson.module = SerializersModule { polymorphic(classOfFather, son, son.serializer()) }
             return poliJson
@@ -52,19 +52,17 @@ class PoliComplexJson {
 
 
     @OptIn(InternalSerializationApi::class)
-    fun <T : Any, E : T> andFor(son: KClass<E>): PoliComplexJson {
-        val classOfFather = getFather<E, T>(son)
+    fun <Z : Any, E : Z> andFor(son: KClass<E>): PoliComplexJson<T> {
+        val classOfFather = getFather<E, Z>(son)
         module += SerializersModule { polymorphic(classOfFather, son, son.serializer()) }
         return this
     }
 
 
-    inline infix fun <reified T> to (client: T): String {
-        return Json { serializersModule = module }.encodeToString(client)
-    }
+    inline infix fun <reified T> to (client: T): String = Json { serializersModule = module }.encodeToString(client)
 
-    inline infix fun <reified T> from (client: String): T {
-        return Json { ignoreUnknownKeys = true; serializersModule = module }.decodeFromString(client)
-    }
+
+    inline infix fun <reified T> from (client: String): T =  Json { ignoreUnknownKeys = true; serializersModule = module }.decodeFromString(client)
+
 }
 

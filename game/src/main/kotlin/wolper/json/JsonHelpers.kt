@@ -8,11 +8,9 @@ import wolper.formal.helper.PoliComplexJson
 class JsonHelpers {
     val desposition = PoliComplexJson.newSerializerFor(GameDisposition::class)
 
-    val state = PoliComplexJson.newSerializerFor(GameState::class)
-        .andFor(GameDisposition::class).andFor(GameStartingPoint::class)
+    val state = PoliComplexJson.newSerializerFor(GameState::class).andFor(GameDisposition::class).andFor(GameStartingPoint::class)
 
-    val move = PoliComplexJson.newSerializerFor(Move::class)
+    val move  = PoliComplexJson.newSerializerFor(Move::class)
 
-    val history = PoliComplexJson.newSerializerFor(GameHistory::class)
-        .andFor(GameDisposition::class).andFor(Move::class)
+    val history = PoliComplexJson.newSerializerFor(GameHistory::class).andFor(GameDisposition::class).andFor(Move::class)
 }

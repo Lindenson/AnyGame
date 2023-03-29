@@ -11,10 +11,10 @@ class GameServiceImpl : AGameService<Int, Int, Int, Long> {
     override fun createGame(player: Long): Long {
         TODO("""
             1. Find a player // sure he is free // set busy
-            3. Create game state
-            4. Create saga
-            5. Find a player // sure he is busy // set free
-            6. Return game ID
+            2. Create saga
+            3. Create game state            
+            4. Find a player // sure he is busy // set free
+            5. Return game ID
         """.trimIndent())
     }
 
@@ -32,7 +32,7 @@ class GameServiceImpl : AGameService<Int, Int, Int, Long> {
             1. Find a saga  // check it // update it
             2. Update a player
             3. Update state            
-            7. Send message po player  
+            4. Send message po player  
         """.trimIndent())
     }
 
